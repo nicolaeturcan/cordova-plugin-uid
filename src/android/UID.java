@@ -62,8 +62,7 @@ public class UID extends CordovaPlugin {
 		UID.uuid = getUuid(context);
 
 		if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE) ) {
-			PermissionHelper.requestPermission(this, PHONE_STATE_CODE,
-					Manifest.permission.READ_PHONE_STATE);
+			PermissionHelper.requestPermission(this, PHONE_STATE_CODE, Manifest.permission.READ_PHONE_STATE);
 
 			UID.imei = "";
 			UID.imsi = "";
@@ -89,18 +88,30 @@ public class UID extends CordovaPlugin {
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 		this.callbackContext = callbackContext;
+		
 		if (action.equals("getUID")) {
-			JSONObject r = new JSONObject();
-			r.put("UUID", UID.uuid);
-			r.put("IMEI", UID.imei);
-			r.put("IMSI", UID.imsi);
-			r.put("ICCID", UID.iccid);
-			r.put("MAC", UID.mac);
+			if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE) ) {
+				PermissionHelper.requestPermission(this, PHONE_STATE_CODE, Manifest.permission.READ_PHONE_STATE);
 
-			PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, r);
-			pluginResult.setKeepCallback(true);
-			callbackContext.sendPluginResult(pluginResult);
+				UID.imei = "";
+				UID.imsi = "";
+				UID.iccid = "";
+			} else {
+
+				JSONObject r = new JSONObject();
+				r.put("UUID", UID.uuid);
+				r.put("IMEI", UID.imei);
+				r.put("IMSI", UID.imsi);
+				r.put("ICCID", UID.iccid);
+				r.put("MAC", UID.mac);
+
+				PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, r);
+				pluginResult.setKeepCallback(true);
+				callbackContext.sendPluginResult(pluginResult);
+			}
+			
 			return true;
+			
 		} else {
 			return false;
 		}
@@ -188,7 +199,9 @@ public class UID extends CordovaPlugin {
 					r.put("ICCID", UID.iccid);
 					r.put("MAC", UID.mac);
 
-					callbackContext.success(r);
+					PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, r);
+					pluginResult.setKeepCallback(true);
+					callbackContext.sendPluginResult(pluginResult);
 				} else if( grantResults[i] == PackageManager.PERMISSION_DENIED ) {
 					Log.w(TAG, "onRequestPermissionResult: permission READ_PHONE_STATE denied");
 				}
