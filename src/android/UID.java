@@ -38,6 +38,8 @@ public class UID extends CordovaPlugin {
 
 	private CallbackContext callbackContext;
 
+	private static boolean needRequestPermission = true;
+
 	/**
 	 * Constructor.
 	 */
@@ -61,7 +63,8 @@ public class UID extends CordovaPlugin {
 
 		UID.uuid = getUuid(context);
 
-		if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE) ) {
+		if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE) && needRequestPermission) {
+			needRequestPermission = false;
 			PermissionHelper.requestPermission(this, PHONE_STATE_CODE, Manifest.permission.READ_PHONE_STATE);
 
 			UID.imei = "";
@@ -88,9 +91,11 @@ public class UID extends CordovaPlugin {
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 		this.callbackContext = callbackContext;
-		
+
 		if (action.equals("getUID")) {
-			if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE) ) {
+			if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE)  && needRequestPermission) {
+				needRequestPermission = false;
+
 				PermissionHelper.requestPermission(this, PHONE_STATE_CODE, Manifest.permission.READ_PHONE_STATE);
 
 				UID.imei = "";
@@ -109,9 +114,9 @@ public class UID extends CordovaPlugin {
 				pluginResult.setKeepCallback(true);
 				callbackContext.sendPluginResult(pluginResult);
 			}
-			
+
 			return true;
-			
+
 		} else {
 			return false;
 		}
@@ -182,6 +187,8 @@ public class UID extends CordovaPlugin {
 
 		Log.d(TAG, "onRequestPermissionResult: ***");
 
+		needRequestPermission = true;
+
 		for(int i=0;i<permissions.length;i++) {
 			if( permissions[i].equals(Manifest.permission.READ_PHONE_STATE) ) {
 
@@ -204,6 +211,11 @@ public class UID extends CordovaPlugin {
 					callbackContext.sendPluginResult(pluginResult);
 				} else if( grantResults[i] == PackageManager.PERMISSION_DENIED ) {
 					Log.w(TAG, "onRequestPermissionResult: permission READ_PHONE_STATE denied");
+
+					//it's for execute callback.
+					PluginResult pluginResult = new PluginResult(PluginResult.Status.OK);
+					pluginResult.setKeepCallback(true);
+					callbackContext.sendPluginResult(pluginResult);
 				}
 
 			}
