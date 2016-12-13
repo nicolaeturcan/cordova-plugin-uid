@@ -92,28 +92,46 @@ public class UID extends CordovaPlugin {
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 		this.callbackContext = callbackContext;
 
+		JSONObject r = new JSONObject();
+
 		if (action.equals("getUID")) {
-			if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE)  && needRequestPermission) {
-				needRequestPermission = false;
+			if( needRequestPermission ){
+				if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE)) {
+					needRequestPermission = false;
 
-				PermissionHelper.requestPermission(this, PHONE_STATE_CODE, Manifest.permission.READ_PHONE_STATE);
+					PermissionHelper.requestPermission(this, PHONE_STATE_CODE, Manifest.permission.READ_PHONE_STATE);
 
-				UID.imei = "";
-				UID.imsi = "";
-				UID.iccid = "";
-			} else {
+					UID.imei = "";
+					UID.imsi = "";
+					UID.iccid = "";
 
-				JSONObject r = new JSONObject();
+					return true;
+				} else {
+
+	                if (UID.imei == null || UID.imei.isEmpty()) {
+						Context context = cordova.getActivity().getApplicationContext();
+	                    r.put("IMEI", getImei(context));
+	                    r.put("IMSI", getImsi(context));
+	                    r.put("ICCID", getIccid(context));
+	                } else {
+	                    r.put("IMEI", UID.imei);
+	                    r.put("IMSI", UID.imsi);
+	                    r.put("ICCID", UID.iccid);
+	                }
+				}
+			}else{
 				r.put("UUID", UID.uuid);
 				r.put("IMEI", UID.imei);
 				r.put("IMSI", UID.imsi);
-				r.put("ICCID", UID.iccid);
-				r.put("MAC", UID.mac);
 
-				PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, r);
-				pluginResult.setKeepCallback(true);
-				callbackContext.sendPluginResult(pluginResult);
 			}
+		
+			r.put("ICCID", UID.iccid);
+			r.put("MAC", UID.mac);
+
+			PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, r);
+			pluginResult.setKeepCallback(true);
+			callbackContext.sendPluginResult(pluginResult);
 
 			return true;
 
