@@ -37,8 +37,9 @@ public class UID extends CordovaPlugin {
 	public static String mac; // MAC address
 
 	private CallbackContext callbackContext;
+    private Context context;
 
-	private static boolean needRequestPermission = true;
+    private static boolean needRequestPermission = true;
 
 	/**
 	 * Constructor.
@@ -57,27 +58,9 @@ public class UID extends CordovaPlugin {
 	public void initialize(CordovaInterface cordova, CordovaWebView webView) {
 		super.initialize(cordova, webView);
 
-		Log.d(TAG, "initialize: ***");
+        Log.d(TAG, "*********** UID initialize " );
 
-		Context context = cordova.getActivity().getApplicationContext();
-
-		UID.uuid = getUuid(context);
-
-		if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE) && needRequestPermission) {
-			needRequestPermission = false;
-			PermissionHelper.requestPermission(this, PHONE_STATE_CODE, Manifest.permission.READ_PHONE_STATE);
-
-			UID.imei = "";
-			UID.imsi = "";
-			UID.iccid = "";
-		} else {
-			UID.imei = getImei(context);
-			UID.imsi = getImsi(context);
-			UID.iccid = getIccid(context);
-		}
-
-		UID.mac = getMac(context);
-
+		this.context = cordova.getActivity().getApplicationContext();
 	}
 
 	/**
@@ -94,8 +77,10 @@ public class UID extends CordovaPlugin {
 
 		JSONObject r = new JSONObject();
 
+        Log.d(TAG, "*********** UID execute: " + args);
+
 		if (action.equals("getUID")) {
-			if( needRequestPermission ){
+			if( needRequestPermission && (args != null && args.length() > 0 && "appExecute".equals(args.getString(0)))){
 				if( !PermissionHelper.hasPermission(this, Manifest.permission.READ_PHONE_STATE)) {
 					needRequestPermission = false;
 
@@ -109,7 +94,6 @@ public class UID extends CordovaPlugin {
 				} else {
 
 	                if (UID.imei == null || UID.imei.isEmpty()) {
-						Context context = cordova.getActivity().getApplicationContext();
 	                    r.put("IMEI", getImei(context));
 	                    r.put("IMSI", getImsi(context));
 	                    r.put("ICCID", getIccid(context));
@@ -211,8 +195,6 @@ public class UID extends CordovaPlugin {
 			if( permissions[i].equals(Manifest.permission.READ_PHONE_STATE) ) {
 
 				if( grantResults[i] == PackageManager.PERMISSION_GRANTED ) {
-					Context context = cordova.getActivity().getApplicationContext();
-
 					UID.imei = getImei(context);
 					UID.imsi = getImsi(context);
 					UID.iccid = getIccid(context);
