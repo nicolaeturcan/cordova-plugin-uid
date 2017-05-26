@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-	id="org.rnldfll.cordova.uid"
+	id="org.hygieiasoft.cordova.uid"
 	version="1.1.1">
 	<name>UID</name>
 	<description>Cordova plugin to get unique identifiers: UUID, IMEI, IMSI, ICCID and MAC.</description>
@@ -16,7 +16,7 @@
 	<platform name="android">
 		<config-file target="res/xml/config.xml" parent="/*">
 			<feature name="UID">
-				<param name="android-package" value="org.rnldfll.cordova.uid.UID" />
+				<param name="android-package" value="org.hygieiasoft.cordova.uid.UID" />
 			</feature>
 		</config-file>
 		<config-file target="AndroidManifest.xml" parent="/*">
@@ -24,9 +24,9 @@
 			<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 		</config-file>
 
-		<source-file src="src/android/UID.java" target-dir="src/org/rnldfll/cordova/uid" />
+		<source-file src="src/android/UID.java" target-dir="src/org/hygieiasoft/cordova/uid" />
         <source-file src="src/android/PermissionHelper.java" 
-                     target-dir="src/org/rnldfll/cordova/uid" />
+                     target-dir="src/org/hygieiasoft/cordova/uid" />
 	</platform>
 
 </plugin>
