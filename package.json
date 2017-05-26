@@ -1,0 +1,36 @@
+{
+  "name": "cordova-plugin-uid",
+  "version": "1.1.1",
+  "description": "Cordova plugin to get unique identifiers: UUID, IMEI, IMSI, ICCID and MAC.",
+  "cordova": {
+    "id": "org.rnldfll.cordova.uid",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rnldfll/cordova-plugin-uid.git"
+  },
+  "keywords": [
+    "cordova",
+    "uid",
+    "imei",
+    "imsi",
+    "uuid",
+    "sim",
+    "iccid",
+    "mac"
+  ],
+  "author": "hygieiasoft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hygieiasoft/cordova-plugin-uid/issues"
+  },
+  "homepage": "https://github.com/hygieiasoft/cordova-plugin-uid",
+  "devDependencies": {
+  }
+}
